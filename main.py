@@ -14,41 +14,65 @@
 
 # [START gae_python37_render_template]
 import datetime
+import pymongo
 
 from flask import Flask, render_template
 from google.cloud import datastore
 
+import random
+
+
 app = Flask(__name__)
 datastore_client = datastore.Client()
+# client = pymongo.MongoClient("mongodb+srv://db_access_user:OurCloset@ourcloset-3thrj.mongodb.net/test?retryWrites=true&w=majority")
 
-def store_time(dt):
-    entity = datastore.Entity(key=datastore_client.key('visit'))
-    entity.update({
-        'timestamp': dt
-    })
+def get(username):
+    """Gets users by their username"""
+    mydb = client['ourcloset']
+    mycol = mydb['users']
+    user = mycol.find({"user_name": username})
+    return user[0]
 
-    datastore_client.put(entity)
-
-
-def fetch_times(limit):
-    query = datastore_client.query(kind='visit')
-    query.order = ['-timestamp']
-
-    times = query.fetch(limit=limit)
-
-    return times
+def get_collections(collection):
+    mydb = client['ourcloset']
+    mycol = mydb[collection]
+    # return all the items from collection
+    return mycol.find() 
 
 @app.route('/')
 def root():
-    # Store the current access time in Datastore.
-    store_time(datetime.datetime.now())
 
-    # Fetch the most recent 10 access times from Datastore.
-    times = fetch_times(10)
+    # Fetch the most recent user from the Datastore
+    # users = get_collections('users')
+    users = [
+        {"user_name": "Will"},
+        {"user_name": "Ron"},
+        {"user_name": "David"},
+        {"user_name": "Sanika"},
+        ]
 
-    return render_template(
-        'index.html', times=times)
+    return render_template('index.html', users=users)
 
+@app.route('/profile')
+def profile_page():
+    user_id = "Bruce Wayne"
+    return render_template('profile.html', user_id=user_id)
+
+@app.route('/closet')
+def closet_page():
+    user_id = "Tony Stark"
+    return render_template('closet.html', user_id=user_id)
+
+@app.route('/item')
+def item_page():
+    user_id = "Kylo Ren"
+    return render_template('item.html', user_id=user_id)
+
+@app.route('/items')
+def items_page():
+    user_id = "Steve Rogers"
+    return render_template('items.html', user_id=user_id)
+    
 
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App

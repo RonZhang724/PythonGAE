@@ -1,18 +1,184 @@
 <!doctype html>
 <html>
 <head>
-  <title>Datastore and Firebase Auth Example</title>
-  <script src="{{ url_for('static', filename='script.js') }}"></script>
+  <meta charset="utf-8">
+  <title>MongoDB + GAE Demo</title>
+
+  <!-- Added bootstrap frontend component -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+  
   <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.css') }}" >
+
+  <!-- Make sure the following line is added for mobile device support -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
 </head>
 <body>
+  <nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>                        
+        </button>
+        <a class="navbar-brand" href="{{url_for('profile_page')}}">Profile</a>
+      </div>
+      <div class="collapse navbar-collapse" id="myNavbar">
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="#">Home</a></li>
+          <li><a href="{{url_for('closet_page')}}">My Closet</a></li>
+          <li><a href="{{url_for('items_page')}}">Community</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="#"><span class="glyphicon glyphicon-log-in"></span>  Login</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
 
-  <h1>Datastore and Firebase Auth Example</h1>
+  <div class="jumbotron">
+    <div class="container text-center">
+      <h1>Our Closet</h1>      
+      <p>What is better than my closet? Our Closet!</p>
+      <div class="md-form mt-0">
+        <input class="form-control" type="text" placeholder="Search" aria-label="Search">
+      </div>
+    </div>
+  </div>
 
-  <h2>Last 10 visits</h2>
-  {% for time in times %}
-    <p>{{ time['timestamp'] }}</p>
-  {% endfor %}
+  <div class="container text-center">    
+    <div class="row">
 
+      <div class="col-sm-3 well">
+        <div class="well">
+          <p><a href="{{url_for('profile_page')}}">My Profile</a></p>
+          <img src="{{ url_for('static', filename='images/1.jpg') }}" class="img-circle" height="65" width="65" alt="Avatar">
+        </div>
+        <div class="well">
+          <p><a href="#">Type(Themes)</a></p>
+          <p>
+            <span class="label label-default">Hat</span>
+            <span class="label label-primary">Sweater</span>
+            <span class="label label-success">Jacket</span>
+            <span class="label label-info">Jean</span>
+            <span class="label label-warning">Dress</span>
+            <span class="label label-danger">Pants</span>
+            <span class="label label-default">Blazer</span>
+            <span class="label label-primary">Shoe</span>
+            <span class="label label-success">Socks</span>
+            <span class="label label-info">Underwear</span>
+            <span class="label label-warning">Boxer</span>
+            <span class="label label-danger">Skirt</span>
+          </p>
+        </div>
+        <div class="well">
+          <p><a href="#">Tags</a></p>
+          <p>
+            <span class="label label-default">summer</span>
+            <span class="label label-primary">oldschool</span>
+            <span class="label label-success">spring</span>
+            <span class="label label-info">hip-hop</span>
+            <span class="label label-warning">emo</span>
+            <span class="label label-danger">nerdy</span>
+            <span class="label label-default">happy</span>
+            <span class="label label-primary">teen</span>
+            <span class="label label-success">retro</span>
+            <span class="label label-info">cowboy</span>
+          </p>
+        </div>
+        <div class="alert alert-success fade in">
+          <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+          <p><strong>Ey!</strong></p>
+          You are looking great today, wanna share the swag you are wearing?
+        </div>
+      </div>
+
+
+      <div class="col-sm-7">
+
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="panel panel-default text-left">
+              <div class="panel-body">
+
+                <form>
+                    <div class="form-group">
+                      <label for="comment">Title:</label>
+                      <textarea class="form-control" rows="1" id="comment"></textarea>
+                    </div>
+                  <div class="form-group">
+                    <label for="comment">Whay's in your mind:</label>
+                    <textarea class="form-control" rows="5" id="comment"></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label for="picture">Upload a picture</label>
+                    <input type="file" class="form-control-file" id="exampleFormControlFile1">
+                  </div>  
+                  <div class="form-group">
+                    <label for="comment">Where did you get it?</label>
+                    <textarea class="form-control" rows="1" id="comment"></textarea>
+                  </div>
+                  <button type="submit" class="btn btn-primary">Submit</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        
+        {% for user in users %}
+        <div class="row">
+          <div class="col-sm-3">
+            <div class="well">
+              <p>{{ user['user_name'] }}</p>
+              <img src="{{ url_for('static', filename='images/2.jpg') }}" class="img-circle" height="55" width="55" alt="Avatar">
+            </div>
+          </div>
+          <div class="col-sm-9">
+            <div class="well">
+              <p>Just uploaded a new photo of my sweater! If you would like to know where I bought it from, make sure to checkout the location I added for the item!</p>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="col-sm-2 well">
+        <div class="thumbnail">
+          <p>Top liked items:</p>
+          <img src="{{ url_for('static', filename='images/hat1.jpeg') }}" alt="Hat" width="400" height="400">
+          <p><strong>H&M Summer Hat</strong></p>
+          <p>Mon. 30 September 2019</p>
+          <button 
+          class="btn btn-primary" 
+          type="button" 
+          onclick="window.location.href='{{ url_for('item_page') }}';">Info</button>
+        </div>      
+        <div class="thumbnail">
+          <p>Top liked items:</p>
+          <img src="{{ url_for('static', filename='images/heels1.png') }}" alt="Heel" width="400" height="400">
+          <p><strong>Christian Louboutin Heels</strong></p>
+          <p>Mon. 30 September 2019</p>
+          <button class="btn btn-primary">Info</button>
+        </div>  
+        <div class="thumbnail">
+          <p>Top liked items:</p>
+          <img src="{{ url_for('static', filename='images/sweater1.png') }}" alt="Sweater" width="400" height="400">
+          <p><strong>Rick and Morty Sweater</strong></p>
+          <p>Mon. 30 September 2019</p>
+          <button class="btn btn-primary">Info</button>
+        </div>  
+      </div>
+
+    </div>
+  </div>
+
+  <footer class="container-fluid text-center">
+    <p>This is just a quick demo of the MongoDB and GAE functionalities.</p>
+  </footer>
 </body>
 </html>
